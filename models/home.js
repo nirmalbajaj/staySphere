@@ -6,7 +6,7 @@ const homeSchema = mongoose.Schema({
   price: { type: Number, required: true },
   location: { type: String, required: true },
   rating: { type: Number, required: true },
-  photoUrl: { type: String, required: true },
+  photo: String,
   description: String,
 });
 
