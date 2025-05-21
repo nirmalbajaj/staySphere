@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: staysphere
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        sync: false
+      - key: SESSION_SECRET 
+        sync: false
+      - key: PORT
+        sync: false
+    disk:
+      name: uploads
+      mountPath: /opt/render/project/src/uploads
+      sizeGB: 1

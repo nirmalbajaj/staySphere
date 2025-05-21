@@ -9,8 +9,12 @@ const { default: mongoose } = require('mongoose')
 const authRouter = require('./routes/authRouter')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
-const DB_PATH = "mongodb+srv://root:root@airbnbnodejs.vxqihyg.mongodb.net/airbnb?retryWrites=true&w=majority&appName=airbnbNodejs"
+// Add dotenv config
+require('dotenv').config()
 
+// Use environment variables instead of hardcoded values
+const DB_PATH = process.env.DB_PATH
+const PORT = process.env.PORT || 3003
 
 const app = express()
 
@@ -24,6 +28,12 @@ const randomString = (length) => {
     result+=characters.charAt(Math.floor(Math.random() * characters.length))
   }
   return result
+}
+
+// Create uploads directory if it doesn't exist (for Render deployment)
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
 }
 
 const storage = multer.diskStorage({
@@ -58,7 +68,7 @@ const store = new MongoDBStore({
 })
 
 app.use(session({
-  secret: "secret",
+  secret: process.env.SESSION_SECRET || "secret",
   resave: false,
   saveUninitialized: true,
   store
@@ -81,11 +91,10 @@ app.use("/host", hostRouter)
 app.use(authRouter)
 app.use(pageNotFound)
 
-const PORT = 3003
 mongoose.connect(DB_PATH).then(() => {
   console.log("Connected to Mongo")
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`)
+    console.log(`Server running at port ${PORT}`)
   })
 }).catch(error => {
   console.log("Error while connecting to Mongo: ", error)
